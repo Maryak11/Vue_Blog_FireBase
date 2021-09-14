@@ -1,6 +1,6 @@
 <template>
   <div class="reset-password">
-    <Modals
+    <Modal
       v-if="modalActive"
       :modalMessage="modalMessage"
       @close-modal="closeModal"
@@ -32,7 +32,7 @@
 
 <script>
 import email from '../assets/Icons/envelope-regular.svg'
-import Modals from '../components/Modals.vue'
+import Modal from '../components/Modal.vue'
 import Loading from '../components/Loading.vue'
 import firebase from 'firebase/app'
 import 'firebase/auth'
@@ -49,7 +49,7 @@ export default {
   },
   components: {
     email,
-    Modals,
+    Modal,
     Loading
   },
   methods: {

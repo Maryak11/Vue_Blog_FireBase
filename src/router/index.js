@@ -7,6 +7,8 @@ import Register from '../views/Register.vue'
 import ForgotPassword from '../views/ForgotPassword.vue'
 import Admin from '../views/Admin.vue'
 import Profile from '../views/Profile.vue'
+import CreatePost from '../views/CreatePost.vue'
+import BlogPreview from '../views/BlogPreview.vue'
 
 Vue.use(VueRouter)
 
@@ -65,6 +67,22 @@ const routes = [
     component: ForgotPassword,
     meta: {
       title: 'ForgotPassword'
+    }
+  },
+  {
+    path: '/createPost',
+    name: 'CreatePost',
+    component: CreatePost,
+    meta: {
+      title: 'CreatePost'
+    }
+  },
+  {
+    path: '/blogPreview',
+    name: 'BlogPreview',
+    component: BlogPreview,
+    meta: {
+      title: 'BlogPreview'
     }
   }
 ]

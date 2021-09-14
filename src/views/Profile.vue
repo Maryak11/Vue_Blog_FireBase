@@ -1,10 +1,14 @@
 <template>
   <div class="profile">
-    <Modal :modalMessage="modalMessage" />
+    <Modal
+      v-if="modalActive"
+      :modalMessage="modalMessage"
+      @close-modal="closeModal"
+    />
     <div class="container">
       <h2>Account Settings</h2>
       <div class="profile-info">
-        <div class="initials"></div>
+        <div class="initials">{{ profileInitials }}</div>
         <div class="admin-badge">
           <adminIcon class="icon" />
           <span>admin</span>
@@ -34,6 +38,7 @@
 <script>
 import Modal from '../components/Modal'
 import adminIcon from '../assets/Icons/user-crown-light.svg'
+import { mapState } from 'vuex'
 export default {
   name: 'Profile',
   components: {
@@ -43,7 +48,7 @@ export default {
   data() {
     return {
       modalMessage: 'Changes were saved!',
-      modalActive: null
+      modalActive: false
     }
   },
   methods: {
@@ -56,6 +61,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['profileInitials']),
     firstName: {
       get() {
         return this.$store.state.profileFirstName
@@ -74,7 +80,7 @@ export default {
     },
     username: {
       get() {
-        return this.$store.state.profileUsername
+        return this.$store.state.profileUserName
       },
       set(payload) {
         this.$store.commit('changeUsername', payload)
