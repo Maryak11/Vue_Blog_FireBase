@@ -1,6 +1,7 @@
 <template>
   <div class="app-wrapper">
-    <div class="app">
+    <loading v-if="!postLoaded" />
+    <div class="app" v-if="postLoaded">
       <navigaton v-if="!navigation" />
       <router-view />
       <Footer v-if="!navigation" />
@@ -11,19 +12,25 @@
 <script>
 import Navigaton from './components/Navigaton.vue'
 import Footer from './components/Footer.vue'
+import { mapState } from 'vuex'
 import firebase from 'firebase/app'
 import 'firebase/auth'
+import Loading from './components/Loading.vue'
 
 export default {
   name: 'app',
   components: {
     Navigaton,
-    Footer
+    Footer,
+    Loading
   },
   data() {
     return {
       navigation: null
     }
+  },
+  computed: {
+    ...mapState(['postLoaded'])
   },
   created() {
     firebase.auth().onAuthStateChanged(user => {
@@ -33,7 +40,7 @@ export default {
         this.$store.dispatch('getCurrentUser')
       }
     })
-    this.checkRoute()
+    this.checkRoute(), this.$store.dispatch('getPost')
   },
   mounted() {},
   methods: {

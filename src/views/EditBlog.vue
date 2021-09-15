@@ -37,7 +37,7 @@
       </div>
 
       <div class="blog-actions">
-        <button @click="uploadBlog">Publish Blog</button>
+        <button @click="uploadBlog">Update Blog</button>
         <router-link class="router-button" :to="{ name: 'BlogPreview' }"
           >Post Preview</router-link
         >
@@ -69,12 +69,21 @@ export default {
       error: null,
       errorMsg: null,
       loading: null,
+      routeID: null,
+      currentBlog: null,
       editorSettings: {
         modules: {
           imageResize: {}
         }
       }
     }
+  },
+  async mounted() {
+    this.routeID = this.$route.params.blogId
+    this.currentBlog = await this.$store.state.blogPosts.filter(
+      post => post.blogID === this.routeID
+    )
+    this.$store.commit('setBlogPost', this.currentBlog[0])
   },
   components: {
     BlogCoverPreview,
@@ -130,7 +139,8 @@ export default {
         }
       )
     },
-    uploadBlog() {
+    async uploadBlog() {
+      const dataBase = await db.collection('blogPosts').doc(this.routeID)
       if (this.blogTitle.length !== 0 && this.blogHTML.length !== 0) {
         if (this.file) {
           this.loading = true
@@ -149,20 +159,14 @@ export default {
             },
             async () => {
               const downloadURL = await docRef.getDownloadURL()
-              const timestamp = await Date.now()
-              const dataBase = await db.collection('blogPosts').doc()
-              console.log(dataBase)
 
-              await dataBase.set({
-                blogID: dataBase.id,
+              await dataBase.update({
                 blogHTML: this.blogHTML,
                 blogCoverPhoto: downloadURL,
                 blogCoverPhotoName: this.blogPhotoName,
-                blogTitle: this.blogTitle,
-                profileId: this.profileId,
-                date: timestamp
+                blogTitle: this.blogTitle
               })
-              await this.$store.dispatch('getPost')
+              await this.$store.dispatch('updatePost', this.routeID)
               this.loading = false
               this.$router.push({
                 name: 'ViewBlog',
@@ -172,11 +176,17 @@ export default {
           )
           return
         }
-        this.error = true
-        this.errorMsg = 'Please ensure you uploaded a cover photo!'
-        setTimeout(() => {
-          this.error = false
-        }, 5000)
+        this.loading = true
+        await dataBase.update({
+          blogTitle: this.blogTitle,
+          blogHTML: this.blogHTML
+        })
+        await this.$store.dispatch('updatePost', this.routeID)
+        this.loading = false
+        this.$router.push({
+          name: 'ViewBlog',
+          params: { blodId: this.routeID }
+        })
         return
       }
       this.error = true

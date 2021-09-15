@@ -30,6 +30,7 @@ export default new Vuex.Store({
         blogDate: 'May1, 2021'
       }
     ],
+    blogPosts: [],
     postLoaded: null,
     blogHTML: 'Write your blog title here...',
     blogTitle: '',
@@ -87,6 +88,15 @@ export default new Vuex.Store({
     },
     openPhotoPreview(state) {
       state.blogPhotoPreview = !state.blogPhotoPreview
+    },
+    deletePost(state, payload) {
+      state.blogPosts = state.blogPosts.filter(post => post.blogID !== payload)
+    },
+    setBlogPost(state, currentBlog) {
+      state.blogTitle = currentBlog.blogTitle
+      state.blogHTML = currentBlog.blogHTML
+      state.blogPhotoFileURL = currentBlog.blogCoverPhoto
+      state.blogPhotoName = currentBlog.blogCoverPhotoName
     }
   },
   actions: {
@@ -107,6 +117,42 @@ export default new Vuex.Store({
         lastName: state.profileLastName
       })
       commit('setProfileInitials')
+    },
+    async getPost({ state }) {
+      const dataBase = await db.collection('blogPosts').orderBy('date', 'desc')
+      const dbResult = await dataBase.get()
+      dbResult.forEach(el => {
+        if (!state.blogPosts.some(post => post.blogID === el.id)) {
+          const data = {
+            blogID: el.data().blogID,
+            blogHTML: el.data().blogHTML,
+            blogCoverPhoto: el.data().blogCoverPhoto,
+            blogTitle: el.data().blogTitle,
+            blogDate: el.data().date,
+            blogCoverPhotoName: el.data().blogCoverPhotoName
+          }
+          state.blogPosts.push(data)
+        }
+      })
+      state.postLoaded = true
+      console.log(state.blogPosts)
+    },
+    async deletePost({ commit }, payload) {
+      const getPost = await db.collection('blogPosts').doc(payload)
+      await getPost.delete()
+      commit('deletePost', payload)
+    },
+    async updatePost({ commit, dispatch }, payload) {
+      commit('deletePost', payload)
+      await dispatch('getPost')
+    }
+  },
+  getters: {
+    getPostsFeed(state) {
+      return state.blogPosts.slice(0, 2)
+    },
+    getPostsCards(state) {
+      return state.blogPosts.slice(2, 6)
     }
   },
   modules: {}

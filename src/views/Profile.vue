@@ -9,10 +9,7 @@
       <h2>Account Settings</h2>
       <div class="profile-info">
         <div class="initials">{{ profileInitials }}</div>
-        <div class="admin-badge">
-          <adminIcon class="icon" />
-          <span>admin</span>
-        </div>
+
         <div class="input">
           <label for="firstName">First Name:</label>
           <input type="text" id="firstName" v-model="firstName" />
@@ -37,13 +34,11 @@
 
 <script>
 import Modal from '../components/Modal'
-import adminIcon from '../assets/Icons/user-crown-light.svg'
 import { mapState } from 'vuex'
 export default {
   name: 'Profile',
   components: {
-    Modal,
-    adminIcon
+    Modal
   },
   data() {
     return {

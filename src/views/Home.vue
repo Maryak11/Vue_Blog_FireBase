@@ -1,18 +1,15 @@
 <template>
   <div class="home">
+    <Loading v-if="!postLoaded" />
     <BlogPost :post="welcomeScreen" />
-    <BlogPost
-      :post="post"
-      v-for="(post, index) in simpelBlogPost"
-      :key="index"
-    />
+    <BlogPost :post="post" v-for="(post, index) in postsFeed" :key="index" />
     <div class="blog-card-wrap">
       <div class="container">
         <h3>View More Recent Blogs</h3>
         <div class="blog-cards">
           <BlogCard
             :post="post"
-            v-for="(post, index) in simpleBlogCards"
+            v-for="(post, index) in postsCards"
             :key="index"
           />
         </div>
@@ -34,12 +31,14 @@ import BlogPost from '../components/BlogPost.vue'
 import BlogCard from '../components/BlogCard.vue'
 import Arrow from '../assets/Icons/arrow-right-light.svg'
 import { mapState } from 'vuex'
+import Loading from '../components/Loading.vue'
 export default {
   name: 'Home',
   components: {
     BlogPost,
     BlogCard,
-    Arrow
+    Arrow,
+    Loading
   },
   data() {
     return {
@@ -49,23 +48,17 @@ export default {
           'Weekly blog articles with all things programming including HTML, CSS, JavaScript and more. Register today to never miss a post!',
         welcomeScreen: true,
         photo: 'coding'
-      },
-      simpelBlogPost: [
-        {
-          title: 'asdasd asdasda asdasdasd',
-          blogHtml: 'asdas asdsa 21321 123 123 123',
-          blogCoverPhoto: 'beautiful-stories'
-        },
-        {
-          title: 'aasdasd',
-          blogHtml: 'asdas asdsa 21321 123 123 123',
-          blogCoverPhoto: 'designed-for-everyone'
-        }
-      ]
+      }
     }
   },
   computed: {
-    ...mapState(['simpleBlogCards', 'user'])
+    ...mapState(['user', 'postLoaded']),
+    postsFeed() {
+      return this.$store.getters.getPostsFeed
+    },
+    postsCards() {
+      return this.$store.getters.getPostsCards
+    }
   }
 }
 </script>

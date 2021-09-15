@@ -5,10 +5,13 @@ import Blogs from '../views/Blogs.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import ForgotPassword from '../views/ForgotPassword.vue'
-import Admin from '../views/Admin.vue'
 import Profile from '../views/Profile.vue'
 import CreatePost from '../views/CreatePost.vue'
 import BlogPreview from '../views/BlogPreview.vue'
+import ViewBlog from '../views/ViewBlog.vue'
+import EditBlog from '../views/EditBlog.vue'
+// import firebase from 'firebase/app'
+// import 'firebase/auth'
 
 Vue.use(VueRouter)
 
@@ -54,14 +57,6 @@ const routes = [
     }
   },
   {
-    path: '/admin',
-    name: 'Admin',
-    component: Admin,
-    meta: {
-      title: 'Admin'
-    }
-  },
-  {
     path: '/forgotPassword',
     name: 'ForgotPassword',
     component: ForgotPassword,
@@ -84,6 +79,22 @@ const routes = [
     meta: {
       title: 'BlogPreview'
     }
+  },
+  {
+    path: '/viewBlog/:blogId',
+    name: 'ViewBlog',
+    component: ViewBlog,
+    meta: {
+      title: 'ViewBlog'
+    }
+  },
+  {
+    path: '/editBlog/:blogId',
+    name: 'EditBlog',
+    component: EditBlog,
+    meta: {
+      title: 'EditBlog'
+    }
   }
 ]
 
@@ -97,5 +108,12 @@ router.beforeEach((to, from, next) => {
   document.title = `${to.meta.title} | FireBlogs`
   next()
 })
+// router.beforeEach((to, from, next) => {
+//   let user = firebase.auth().currentUser.uid
+//   if (user) {
+//     next()
+//   }
+//   next({ path: '/login' })
+// })
 
 export default router
