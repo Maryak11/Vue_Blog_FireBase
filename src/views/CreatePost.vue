@@ -248,7 +248,7 @@ export default {
     }
 
     span {
-      font-weight: 600;
+      font-weight: 599;
     }
   }
 
