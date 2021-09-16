@@ -1,5 +1,6 @@
 <template>
   <div class="form-wrap">
+    <loading v-if="loading" />
     <form class="login">
       <p class="login-register">
         Don't have an account?
@@ -36,29 +37,34 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 
 import 'firebase/auth'
+import Loading from '../components/Loading.vue'
 export default {
   name: 'Login',
   components: {
     email,
-    password
+    password,
+    Loading
   },
   data() {
     return {
       email: '',
       password: '',
       error: null,
-      errorMsg: ''
+      errorMsg: '',
+      loading: null
     }
   },
   methods: {
     signIn() {
+      this.loading = true
       firebase
         .auth()
         .signInWithEmailAndPassword(this.email, this.password)
         .then(() => {
           this.$router.push({ name: 'Home' })
           ;(this.error = false), (this.errorMsg = '')
-          console.log(firebase.auth().currentUser.uid)
+
+          this.loading = false
         })
         .catch(err => {
           this.error = true

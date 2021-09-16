@@ -10,28 +10,13 @@ import CreatePost from '../views/CreatePost.vue'
 import BlogPreview from '../views/BlogPreview.vue'
 import ViewBlog from '../views/ViewBlog.vue'
 import EditBlog from '../views/EditBlog.vue'
-// import firebase from 'firebase/app'
-// import 'firebase/auth'
+import LoyoutFireBase from '../views/LoyoutFireBase.vue'
+import firebase from 'firebase/app'
+import 'firebase/auth'
 
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home,
-    meta: {
-      title: 'Home'
-    }
-  },
-  {
-    path: '/blogs',
-    name: 'Blogs',
-    component: Blogs,
-    meta: {
-      title: 'Blogs'
-    }
-  },
   {
     path: '/login',
     name: 'Login',
@@ -49,14 +34,6 @@ const routes = [
     }
   },
   {
-    path: '/profile',
-    name: 'Profile',
-    component: Profile,
-    meta: {
-      title: 'Profile'
-    }
-  },
-  {
     path: '/forgotPassword',
     name: 'ForgotPassword',
     component: ForgotPassword,
@@ -65,35 +42,85 @@ const routes = [
     }
   },
   {
-    path: '/createPost',
-    name: 'CreatePost',
-    component: CreatePost,
+    path: '/loyoutfirebase',
+    name: 'Loyoutfirebase',
+    component: LoyoutFireBase,
+    children: [
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: Profile,
+        meta: {
+          title: 'Profile',
+          requiresAuth: true
+        }
+      },
+
+      {
+        path: 'createPost',
+        name: 'CreatePost',
+        component: CreatePost,
+        meta: {
+          title: 'CreatePost',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'blogPreview',
+        name: 'BlogPreview',
+        component: BlogPreview,
+        meta: {
+          title: 'BlogPreview',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'viewBlog/:blogId',
+        name: 'ViewBlog',
+        component: ViewBlog,
+        meta: {
+          title: 'ViewBlog',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'editBlog/:blogId',
+        name: 'EditBlog',
+        component: EditBlog,
+        meta: {
+          title: 'EditBlog',
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/',
+        name: 'Home',
+        component: Home,
+        meta: {
+          title: 'Home',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'blogs',
+        name: 'Blogs',
+        component: Blogs,
+        meta: {
+          title: 'Blogs',
+          requiresAuth: true
+        }
+      }
+    ],
     meta: {
-      title: 'CreatePost'
+      title: 'Loyoutfirebase',
+      requiresAuth: true
     }
   },
   {
-    path: '/blogPreview',
-    name: 'BlogPreview',
-    component: BlogPreview,
+    path: '*',
+    component: Home,
     meta: {
-      title: 'BlogPreview'
-    }
-  },
-  {
-    path: '/viewBlog/:blogId',
-    name: 'ViewBlog',
-    component: ViewBlog,
-    meta: {
-      title: 'ViewBlog'
-    }
-  },
-  {
-    path: '/editBlog/:blogId',
-    name: 'EditBlog',
-    component: EditBlog,
-    meta: {
-      title: 'EditBlog'
+      requiresAuth: true
     }
   }
 ]
@@ -108,12 +135,17 @@ router.beforeEach((to, from, next) => {
   document.title = `${to.meta.title} | FireBlogs`
   next()
 })
-// router.beforeEach((to, from, next) => {
-//   let user = firebase.auth().currentUser.uid
-//   if (user) {
-//     next()
-//   }
-//   next({ path: '/login' })
-// })
+router.beforeEach((to, from, next) => {
+  const user = firebase.auth().currentUser
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!user) {
+      next({ name: 'Login' })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
 
 export default router

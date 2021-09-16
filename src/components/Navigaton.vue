@@ -125,7 +125,7 @@ export default {
     },
     signOut() {
       firebase.auth().signOut()
-      window.location.reload()
+      this.$router.push({ name: 'Login' })
     }
   }
 }

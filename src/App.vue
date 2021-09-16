@@ -2,16 +2,12 @@
   <div class="app-wrapper">
     <loading v-if="!postLoaded" />
     <div class="app" v-if="postLoaded">
-      <navigaton v-if="!navigation" />
       <router-view />
-      <Footer v-if="!navigation" />
     </div>
   </div>
 </template>
 
 <script>
-import Navigaton from './components/Navigaton.vue'
-import Footer from './components/Footer.vue'
 import { mapState } from 'vuex'
 import firebase from 'firebase/app'
 import 'firebase/auth'
@@ -20,8 +16,6 @@ import Loading from './components/Loading.vue'
 export default {
   name: 'app',
   components: {
-    Navigaton,
-    Footer,
     Loading
   },
   data() {
@@ -30,9 +24,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['postLoaded'])
+    ...mapState(['postLoaded', 'user'])
   },
   created() {
+    console.log(firebase.auth().currentUser)
     firebase.auth().onAuthStateChanged(user => {
       this.$store.commit('updateUser', user)
 
@@ -40,26 +35,7 @@ export default {
         this.$store.dispatch('getCurrentUser')
       }
     })
-    this.checkRoute(), this.$store.dispatch('getPost')
-  },
-  mounted() {},
-  methods: {
-    checkRoute() {
-      if (
-        this.$route.name === 'Login' ||
-        this.$route.name === 'Register' ||
-        this.$route.name === 'ForgotPassword'
-      ) {
-        this.navigation = true
-        return
-      }
-      this.navigation = false
-    }
-  },
-  watch: {
-    $route() {
-      this.checkRoute()
-    }
+    this.$store.dispatch('getPost')
   }
 }
 </script>

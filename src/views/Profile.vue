@@ -9,7 +9,6 @@
       <h2>Account Settings</h2>
       <div class="profile-info">
         <div class="initials">{{ profileInitials }}</div>
-
         <div class="input">
           <label for="firstName">First Name:</label>
           <input type="text" id="firstName" v-model="firstName" />
